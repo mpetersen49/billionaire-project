@@ -1,0 +1,19 @@
+#header {
+    background-image: url(../images/Capture.PNG);
+    background-repeat: no-repeat;
+    background-size: cover;
+   }
+
+#header {
+    color: white;
+}
+
+h1 {
+    text-align: left;
+    font-family: georgia;
+}
+
+h3 {
+    text-align: left;
+    font-family: georgia;
+}
