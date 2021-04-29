@@ -1,12 +1,11 @@
+/* start of header */
 #header {
     background-image: url(../images/Capture.PNG);
     background-repeat: no-repeat;
     background-size: cover;
-   }
-
-#header {
     color: white;
-}
+    margin-bottom: 0;
+   }
 
 h1 {
     text-align: left;
@@ -17,3 +16,28 @@ h3 {
     text-align: left;
     font-family: georgia;
 }
+
+#image {
+    background-image: url(../images/image1.png);
+    background-size: cover;
+}
+  
+.ml2 .letter {
+    display: inline-block;
+    line-height: 1em;
+}
+/* end of header */
+/* start of row 2 */
+.col-lg-6 {
+    background-size: cover;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+}
+/* end of row 2 */
+/* start of row 3 */
+.container-fluid {
+    background-color: black;
+}
+/* end of row 3 */
+
