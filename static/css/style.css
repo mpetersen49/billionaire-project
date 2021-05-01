@@ -41,3 +41,34 @@ h3 {
 }
 /* end of row 3 */
 
+div.well {
+    background-color: black;
+}
+
+#selDataset {
+    background-color: black;
+}
+
+div.wrapper {
+    background-color: black;
+}
+
+div.panel-body {
+    background-color: black;
+}
+
+.list-group-item {
+    background-color: black;
+}
+
+#filter-btn {
+    background-color: black;
+}
+
+.panel {
+    background-color: black;
+}
+
+div.panel-heading {
+    background-color: black;
+}

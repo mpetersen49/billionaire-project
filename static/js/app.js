@@ -53,7 +53,7 @@ WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_tok
 //   popup.setLatLng(marker.getLatLng());
 //   map.openPopup(popup);
 // });
-
+var selector = d3.select("#selDataset");
 d3.csv("../static/data/merged_data.csv").then(function(data, err) {
     if (err) throw err;
 
@@ -74,6 +74,10 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
         .bindPopup(`<b>${name}</b><br><b>Rank: ${rank}</b><br><b>Net Worth: ${net}</b>`)
         .addTo(myMap);
        
+      selector.append("option")
+          .text(name)
+          .property("value", name);
+    
     }
     
 }).catch(function(error) {
