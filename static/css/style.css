@@ -65,10 +65,6 @@ div.panel-body {
     background-color: black;
 }
 
-.panel {
-    background-color: black;
-}
-
-div.panel-heading {
+.panel-default>.panel-heading {
     background-color: black;
 }
