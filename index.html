@@ -7,11 +7,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Billionair List</title>
+  <title>Billionaire List</title>
   <!-- Bootstrap -->
-
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/superhero/bootstrap.min.css">
 
   <!-- CSS -->
@@ -19,7 +16,6 @@
 
 </head>
 
-<body>
 <!-- Head Image -->
   <div class="container-xxl">
     <div class="row">
@@ -30,7 +26,19 @@
     </div>
   </div>
 <!-- Head Image End -->
-
+<!-- Dropdown -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="well">
+        <h5>Name:</h5>
+        <select id="selDataset"></select>
+        <!-- HW example to link graphs to dropdown: -->
+        <!-- 15-Interactive-Visualizations-and-Dashboard -->
+      </div>
+    </div>
+  </div>
+</div>
   <div class="container-fluid">
     <div class="row">
 
@@ -40,7 +48,7 @@
       </div>
 
       <!-- Second graph - plotly graph? -->
-      <div class="col-lg-6">
+      <div class="col-lg-5">
         <div id="plotly"></div>
       </div>
 
