@@ -1,6 +1,6 @@
 # Import the functions we need from flask
 from flask import Flask
-# from flask import render_template 
+from flask import render_template 
 from flask import jsonify
 
 # Import the functions we need from SQL Alchemy
@@ -23,11 +23,8 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 @app.route("/")
 def IndexRoute():
-    return (
-        f"Available routes:<br>"
-        f"/<br>"
-        f"/data"
-    )
+    website = render_template("index.html")
+    return website
 
 @app.route("/data")
 def APIrequest():
