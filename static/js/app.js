@@ -71,7 +71,7 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
 
       // Create markers on globe
       var marker = WE.marker([lat, lng])
-        .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
+        .bindPopup(`<b><u>${country}</b></u><br>Number of Billionaires:<b> ${number}</b>`)
         .addTo(myMap);
 
         
