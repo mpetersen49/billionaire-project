@@ -50,6 +50,7 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
 
     // console.log(data);
     var countryFrequency= {};
+
     // Loop through data file
     for(var i=0; i < data.length; i++) {
 
@@ -74,13 +75,53 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
         .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
         .addTo(myMap);
 
-        
-      // Append names to dropdown 
-      selector.append("option")
-          .text(name)
-          .property("value", name);
-    
+      // Select a country
+      var selectedCountry = "United States";
+
+      // filter based on id
+      var plotData = data.filter(obj => {
+        return obj.Country === selectedCountry
+      });
+
     }
+
+    var plotNetWorths = [];
+    var plotNames = [];
+
+    for(var i=0; i < plotData.length; i++) {
+
+      var strNetWorth = plotData[i].NetWorth;
+      strNetWorth = strNetWorth.replace(/\D/g,'');
+      var netWorth = parseFloat(strNetWorth)
+      plotNetWorths.push(netWorth)
+      plotNames.push(plotData[i].Name)
+
+
+   
+    
+
+    }
+
+    console.log(plotData);
+    console.log(plotNetWorths);
+    console.log(plotNames);
+
+    // var res = input.replace(/\D/g,'');
+    // console.log(res); // 667000
+    // console.log(plotData);
+
+    // Create trace for hbar plot
+    // var hbarData = [{
+    //   type: 'bar',
+    //   x: sampleValuesTen,
+    //   y: otuIDs,
+    //   text: otuLabels,
+    //   orientation: 'h'
+    // }];
+
+    // // create the hbar chart
+    // Plotly.newPlot('bar', hbarData);
+    
     
 }).catch(function(error) {
   console.log(error);
