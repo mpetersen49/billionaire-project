@@ -4,7 +4,7 @@ create table billionaires (
 	networth float,
 	country text,
 	source text,
-	rank text,
+	rank int,
 	latitude float,
 	longitude float
 );
