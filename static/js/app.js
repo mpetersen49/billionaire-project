@@ -51,7 +51,7 @@ var selector = d3.select("#selDataset");
 d3.json("/data").then(function(data, err) {
     if (err) throw err;
 
-    console.log(data);
+    // console.log(data);
     var countryFrequency= {};
 
     // Loop through data file
@@ -100,35 +100,74 @@ d3.json("/data").then(function(data, err) {
 
     }
     // need to add a rank function to rank by network rank
-    // console.log(plotData);
+
+    // sort by value
+    plotData.sort(function (a, b) {
+      return b.NetWorth - a.NetWorth;
+    });
+
+    console.log(plotData);
     var plotNetWorths = [];
     var plotNames = [];
+    var plotColors = [];
 
     // use one for loop going up and one going down to get 20 billionaires
     for(var i=0; i < plotData.length; i++) {
 
-      if (plotData[i].Name === selectedName) {
-        
-        var j = i;
-        var last = i + 20;
-        
-        for(j; j < last; j++) {
+      
 
-          var netWorth = plotData[j].NetWorth;
-          plotNetWorths.push(netWorth)
-          var name = plotData[j].Name;
-          plotNames.push(name)
+      if (plotData[i].Name === selectedName) {
+
+        plotColors.push('red');
+
+        if (i > 19 && i < (plotData.length - 19)) {
+
+          var j = i - 10;
+          
+          for(j; j < i; j++) {
+
+            var netWorth = plotData[j].NetWorth;
+            plotNetWorths.push(netWorth)
+            var name = plotData[j].Name;
+            plotNames.push(name)
+          }
+          
+          var k = i;
+          var last = i + 10;
+          
+          for(k; k < last; k++) {
+
+            var netWorth = plotData[k].NetWorth;
+            plotNetWorths.push(netWorth)
+            var name = plotData[k].Name;
+            plotNames.push(name)
+          }
+        }
+
+        else if (i < 20) {
+          for(var j=0; j < 20; j++) {
+            
+            var netWorth = plotData[j].NetWorth;
+            plotNetWorths.push(netWorth)
+            var name = plotData[j].Name;
+            plotNames.push(name)
+            
+          }
+        }
+
+        else if (i > (plotData.length - 20)) {
+          for(var k=(plotData.length - 20); k < plotData.length; k++) {
+            
+            var netWorth = plotData[k].NetWorth;
+            plotNetWorths.push(netWorth)
+            var name = plotData[k].Name;
+            plotNames.push(name)
+            
+          }
         }
       }
-
-
+      
     }
-
-    // console.log(plotData);
-    // console.log(plotNetWorths);
-    // console.log(plotNames);
-
-
     // Create trace for hbar plot
 
     var barData = [{
