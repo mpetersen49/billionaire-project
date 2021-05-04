@@ -72,3 +72,7 @@ div.panel-body {
 .we-pp-content {
     color: black;
 }
+
+.user-select-none {
+    background-color: black;
+}
