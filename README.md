@@ -12,5 +12,6 @@
 1. Open `ETL.ipynb` and run all cells
 1. Open a new git bash terminal on the billionaire-project folder
 1. Make sure you are in the root directory where `app.py` is located
+1. enter `source activate PythonData`
 1. Enter `python app.py` to run the flask server
 
