@@ -51,7 +51,7 @@ var selector = d3.select("#selDataset");
 d3.json("/data").then(function(data, err) {
     if (err) throw err;
 
-    console.log(data);
+    // console.log(data);
     var countryFrequency= {};
 
     // Loop through data file
@@ -137,8 +137,17 @@ d3.json("/data").then(function(data, err) {
       y: plotNetWorths
     }];
 
+    var layout = {
+        title: 'Net Worth ($Billions) vs. Name',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {
+          color: 'rgba(255, 255, 255, 255)'
+        }
+    }
+
     // create the hbar chart
-    Plotly.newPlot('plotly', barData);
+    Plotly.newPlot('plotly', barData, layout);
     
     
 }).catch(function(error) {
