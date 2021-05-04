@@ -78,6 +78,10 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
         .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
         .addTo(myMap);
 
+      // Append names to dropdown
+      selector.append("option")
+        .text(name)
+        .property("value", name);
 
       // Select a country
       var selectedCountry = "";
@@ -108,9 +112,9 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
 
     }
 
-    console.log(plotData);
-    console.log(plotNetWorths);
-    console.log(plotNames);
+    // console.log(plotData);
+    // console.log(plotNetWorths);
+    // console.log(plotNames);
 
 
     // Create trace for hbar plot
