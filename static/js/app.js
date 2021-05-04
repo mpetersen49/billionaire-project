@@ -75,30 +75,33 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
         .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
         .addTo(myMap);
 
-      // Select a country
-      var selectedCountry = "United States";
 
-      // filter based on id
-      var plotData = data.filter(obj => {
-        return obj.Country === selectedCountry
-      });
+      // Select a country
+      var selectedCountry = "";
+
+      // filter based on selected country
+      if (selectedCountry === "") {
+        var plotData = data;
+              }  
+      else {
+        var plotData = data.filter(obj => {
+          return obj.Country === selectedCountry
+          });
+  
+      }
 
     }
-
+    // need to add a rank function to rank by network rank
     var plotNetWorths = [];
     var plotNames = [];
 
     for(var i=0; i < plotData.length; i++) {
 
       var strNetWorth = plotData[i].NetWorth;
-      strNetWorth = strNetWorth.replace(/\D/g,'');
+      strNetWorth = strNetWorth.replace(/[^0-9.]/g, '');
       var netWorth = parseFloat(strNetWorth)
       plotNetWorths.push(netWorth)
       plotNames.push(plotData[i].Name)
-
-
-   
-    
 
     }
 
@@ -106,21 +109,17 @@ d3.csv("../static/data/merged_data.csv").then(function(data, err) {
     console.log(plotNetWorths);
     console.log(plotNames);
 
-    // var res = input.replace(/\D/g,'');
-    // console.log(res); // 667000
-    // console.log(plotData);
 
     // Create trace for hbar plot
-    // var hbarData = [{
-    //   type: 'bar',
-    //   x: sampleValuesTen,
-    //   y: otuIDs,
-    //   text: otuLabels,
-    //   orientation: 'h'
-    // }];
 
-    // // create the hbar chart
-    // Plotly.newPlot('bar', hbarData);
+    var barData = [{
+      type: 'bar',
+      x: plotNames,
+      y: plotNetWorths
+    }];
+
+    // create the hbar chart
+    Plotly.newPlot('plotly', barData);
     
     
 }).catch(function(error) {
