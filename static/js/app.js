@@ -187,6 +187,7 @@ d3.json("/data").then(function(data, err) {
     }];
 
     var layout = {
+      
       title: "World Billionaire's Net Worth",
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
@@ -198,7 +199,9 @@ d3.json("/data").then(function(data, err) {
           text: '$ Billion'
         }
       }
-  }
+    }
+        
+    
 
     // create the hbar chart
     Plotly.newPlot('plotly', barData, layout);
