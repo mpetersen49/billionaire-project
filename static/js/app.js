@@ -85,7 +85,7 @@ d3.json("/data").then(function(data, err) {
 
       // Select a country & name
       var selectedCountry = "";
-      var selectedName = "Li Ge";
+      var selectedName = "Alan Rydge";
 
       // filter based on selected country
       if (selectedCountry === "") {
@@ -109,27 +109,26 @@ d3.json("/data").then(function(data, err) {
     console.log(plotData);
     var plotNetWorths = [];
     var plotNames = [];
-    var plotColors = [];
+    var plotColors = ['blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue'];
+    var plotText = [];
 
     // use one for loop going up and one going down to get 20 billionaires
     for(var i=0; i < plotData.length; i++) {
 
-      
-
       if (plotData[i].Name === selectedName) {
 
-        plotColors.push('red');
-
         if (i > 19 && i < (plotData.length - 19)) {
-
+          plotColors = ['blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','red','blue','blue','blue','blue','blue','blue','blue','blue','blue']
           var j = i - 10;
           
           for(j; j < i; j++) {
 
             var netWorth = plotData[j].NetWorth;
-            plotNetWorths.push(netWorth)
+            plotNetWorths.push(netWorth);
             var name = plotData[j].Name;
-            plotNames.push(name)
+            plotNames.push(name);
+            var text = plotData[j].Source;
+            plotText.push(text);
           }
           
           var k = i;
@@ -141,43 +140,68 @@ d3.json("/data").then(function(data, err) {
             plotNetWorths.push(netWorth)
             var name = plotData[k].Name;
             plotNames.push(name)
+            var text = plotData[k].Source;
+            plotText.push(text);
           }
         }
 
         else if (i < 20) {
+          
           for(var j=0; j < 20; j++) {
-            
+            plotColors[i] = 'red'
             var netWorth = plotData[j].NetWorth;
             plotNetWorths.push(netWorth)
             var name = plotData[j].Name;
             plotNames.push(name)
+            var text = plotData[j].Source;
+            plotText.push(text);
             
           }
         }
 
         else if (i > (plotData.length - 20)) {
           for(var k=(plotData.length - 20); k < plotData.length; k++) {
-            
+            plotColors[i - plotData.length + 20] = 'red'
             var netWorth = plotData[k].NetWorth;
             plotNetWorths.push(netWorth)
             var name = plotData[k].Name;
             plotNames.push(name)
+            var text = plotData[k].Source;
+            plotText.push(text);
             
           }
         }
       }
       
     }
-    // Create trace for hbar plot
 
+    // Create trace for hbar plot
     var barData = [{
       type: 'bar',
       x: plotNames,
-      y: plotNetWorths
+      y: plotNetWorths,
+      text: plotText,
+      marker: {
+        color: plotColors
+      }
     }];
 
+    var layout = {
+      title: "World Billionaire's Net Worth",
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: {
+        color: 'rgba(255, 255, 255, 255)'
+      },
+      yaxis: {
+        title: {
+          text: '$ Billion'
+        }
+      }
+  }
+
     // create the hbar chart
-    Plotly.newPlot('plotly', barData);
+    Plotly.newPlot('plotly', barData, layout);
     
     
 }).catch(function(error) {
