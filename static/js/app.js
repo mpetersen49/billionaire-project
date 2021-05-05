@@ -46,7 +46,8 @@ WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_tok
   accessToken: API_KEY
 }).addTo(myMap);
 
-
+// Load page
+// Need to add in load table
 var selector = d3.select("#selDataset");
 d3.json("/data").then(function(data, err) {
     if (err) throw err;
@@ -211,3 +212,5 @@ d3.json("/data").then(function(data, err) {
   console.log(error);
 });
 
+// Event change
+// 
