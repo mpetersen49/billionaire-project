@@ -29,13 +29,16 @@
 <!-- Dropdown -->
   <div class="container-fluid">
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-2">
         <div class="well">
           <h5>Name:</h5>
-          <select id="selDataset"></select>
+          <select id="selDataset" onchange="dropdownChanged(this.value)"></select>
           <!-- HW example to link graphs to dropdown: -->
           <!-- 15-Interactive-Visualizations-and-Dashboard -->
         </div>
+      </div>
+      <div class="col-sm-10">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="location.reload()"><span>Reset</span></button>
       </div>
     </div>
   </div>
@@ -51,11 +54,8 @@
         <div class="col-lg-6">
           <div id="plotly"></div>
         </div>
-
       </div>
     </div>
-    <div class="container-xl">
-      <div class="row">
 
   <!--Edris code starts here-->
   <div class="wrapper">
@@ -146,7 +146,7 @@
   <!-- anime JS library  (not taught in class)-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
   <!-- JS file -->
-  <script src="../static/js/app.js"></script>
+  <script src="../static/js/logic.js"></script>
 
 </body>
 
