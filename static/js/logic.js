@@ -7,28 +7,28 @@ function initialDashboard() {
     var textWrapper = document.querySelector('.ml2');
     textWrapper.innerHTML = textWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
 
-    anime.timeline({loop: true})
-    .add({
-        targets: '.ml2 .letter',
-        scale: [4,1],
-        opacity: [0,1],
-        translateZ: 0,
-        easing: "easeOutExpo",
-        duration: 950,
-        delay: (el, i) => 70*i
-    }).add({
-        targets: '.ml2',
-        opacity: 1,
-        duration: 60000,
-        easing: "easeOutExpo",
-        delay: 1000
-    });
+    anime.timeline({ loop: true })
+        .add({
+            targets: '.ml2 .letter',
+            scale: [4, 1],
+            opacity: [0, 1],
+            translateZ: 0,
+            easing: "easeOutExpo",
+            duration: 950,
+            delay: (el, i) => 70 * i
+        }).add({
+            targets: '.ml2',
+            opacity: 1,
+            duration: 60000,
+            easing: "easeOutExpo",
+            delay: 1000
+        });
     // End of header text animation 
 
     // Add the map variable for our globe
     var myMap = WE.map("earth_div", {
-    center: [40.7, -73.95],
-    zoom: 2
+        center: [40.7, -73.95],
+        zoom: 2
     });
 
     // Add tile layer to the globe
@@ -39,171 +39,187 @@ function initialDashboard() {
     zoomOffset: -1,
     id: "mapbox/satellite-streets-v11",
     accessToken: API_KEY
+
     }).addTo(myMap);
     
 
     var selector = d3.select("#selDataset");
-    d3.json("/data").then(function(data, err) {
+    d3.json("/data").then(function (data, err) {
         if (err) throw err;
 
         // console.log(data);
-        var countryFrequency= {};
+        var countryFrequency = {};
 
         // Loop through data file
-        for(var i=0; i < data.length; i++) {
+        for (var i = 0; i < data.length; i++) {
 
-        var country = data[i].Country;
-        var name = data[i].Name;
-        var lat = data[i].latitude;
-        var lng = data[i].longitude;
+            var country = data[i].Country;
+            var name = data[i].Name;
+            var lat = data[i].latitude;
+            var lng = data[i].longitude;
 
-        // Count the number of billionaires in each country
-        if (country in countryFrequency) {
-            countryFrequency[country] += 1;
-        }
-        else {
-            countryFrequency[country] = 1;
-        }
+            // Count the number of billionaires in each country
+            if (country in countryFrequency) {
+                countryFrequency[country] += 1;
+            }
+            else {
+                countryFrequency[country] = 1;
+            }
 
-        // Assign the count to number
-        Object.values(countryFrequency).forEach(value=> number=(value));
+            // Assign the count to number
+            Object.values(countryFrequency).forEach(value => number = (value));
 
-        // Create markers on globe
-        
         var marker = WE.marker([lat, lng])
             .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
             .addTo(myMap);
 
-        // Append names to dropdown
-        selector.append("option")
-            .text(name)
-            .property("value", name);
 
+
+
+            // Append names to dropdown
+            selector.append("option")
+                .text(name)
+                .property("value", name);
+        }
         // Select a country & name
         var selectedCountry = "";
-        var selectedName = "Alan Rydge";
+        var selectedName = document.getElementById('selDataset').value;
 
-        // filter based on selected country
+        // filter based on selected country only if filter has been applied
         if (selectedCountry === "") {
             var plotData = data;
-                }  
+        }
         else {
             var plotData = data.filter(obj => {
-            return obj.Country === selectedCountry
+                return obj.Country === selectedCountry
             });
-    
-        }
 
         }
-        // need to add a rank function to rank by network rank
 
-        // sort by value
+        // sort billionaires by networth descending
         plotData.sort(function (a, b) {
-        return b.NetWorth - a.NetWorth;
+            return b.NetWorth - a.NetWorth;
         });
+        // console.log(plotData);
 
-        console.log(plotData);
+        // empty lists for plot and default color list
         var plotNetWorths = [];
         var plotNames = [];
-        var plotColors = ['blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','blue'];
+        var plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'];
         var plotText = [];
 
-        // use one for loop going up and one going down to get 20 billionaires
-        for(var i=0; i < plotData.length; i++) {
+        // loop through all rows of data
+        for (var i = 0; i < plotData.length; i++) {
+            // looking for the billionaire that was selected via filter
+            if (plotData[i].Name === selectedName) {
+                // add 20 billionaires to list. doing it in differently depending on if it is a top 20 or bottom 20 billionaire
+                if (i > 19 && i < (plotData.length - 19)) {
+                    plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'red', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue']
+                    var j = i - 10;
 
-        if (plotData[i].Name === selectedName) {
+                    for (j; j < i; j++) {
 
-            if (i > 19 && i < (plotData.length - 19)) {
-            plotColors = ['blue','blue','blue','blue','blue','blue','blue','blue','blue','blue','red','blue','blue','blue','blue','blue','blue','blue','blue','blue']
-            var j = i - 10;
-            
-            for(j; j < i; j++) {
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth);
+                        var name = plotData[j].Name;
+                        plotNames.push(name);
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+                    }
 
-                var netWorth = plotData[j].NetWorth;
-                plotNetWorths.push(netWorth);
-                var name = plotData[j].Name;
-                plotNames.push(name);
-                var text = plotData[j].Source;
-                plotText.push(text);
-            }
-            
-            var k = i;
-            var last = i + 10;
-            
-            for(k; k < last; k++) {
+                    var k = i;
+                    var last = i + 10;
 
-                var netWorth = plotData[k].NetWorth;
-                plotNetWorths.push(netWorth)
-                var name = plotData[k].Name;
-                plotNames.push(name)
-                var text = plotData[k].Source;
-                plotText.push(text);
-            }
+                    for (k; k < last; k++) {
+
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+                    }
+                }
+
+                else if (i < 20) {
+
+                    for (var j = 0; j < 20; j++) {
+                        plotColors[i] = 'red'
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[j].Name;
+                        plotNames.push(name)
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+
+                    }
+                }
+
+                else if (i > (plotData.length - 20)) {
+                    for (var k = (plotData.length - 20); k < plotData.length; k++) {
+                        plotColors[i - plotData.length + 20] = 'red'
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+
+                    }
+                }
             }
 
-            else if (i < 20) {
-            
-            for(var j=0; j < 20; j++) {
-                plotColors[i] = 'red'
-                var netWorth = plotData[j].NetWorth;
-                plotNetWorths.push(netWorth)
-                var name = plotData[j].Name;
-                plotNames.push(name)
-                var text = plotData[j].Source;
-                plotText.push(text);
-                
-            }
-            }
-
-            else if (i > (plotData.length - 20)) {
-            for(var k=(plotData.length - 20); k < plotData.length; k++) {
-                plotColors[i - plotData.length + 20] = 'red'
-                var netWorth = plotData[k].NetWorth;
-                plotNetWorths.push(netWorth)
-                var name = plotData[k].Name;
-                plotNames.push(name)
-                var text = plotData[k].Source;
-                plotText.push(text);
-                
-            }
-            }
-        }
-        
         }
 
         // Create trace for hbar plot
         var barData = [{
-        type: 'bar',
-        x: plotNames,
-        y: plotNetWorths,
-        text: plotText,
-        marker: {
-            color: plotColors
-        }
+            type: 'bar',
+            y: plotNames,
+            x: plotNetWorths,
+            text: plotText,
+            marker: {
+                color: plotColors
+            },
+            orientation: 'h',
+            transforms: [{
+                type: 'sort',
+                target: 'y',
+                order: 'descending'
+            }]
         }];
 
         var layout = {
-        
-        title: "World Billionaire's Net Worth",
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: 'rgba(0,0,0,0)',
-        font: {
-            color: 'rgba(255, 255, 255, 255)'
-        },
-        yaxis: {
-            title: {
-            text: '$ Billion'
+
+            title: "World Billionaire's Net Worth",
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {
+                color: 'rgba(255, 255, 255, 255)'
+            },
+            xaxis: {
+                title: {
+                    text: '$ Billions'
+                }
+            },
+            autosize: false,
+            width: 900,
+            height: 500,
+            margin: {
+                l: 250,
+                r: 50,
+                b: 100,
+                t: 100,
+                pad: 2
             }
-        }
         }
         // create the hbar chart
         Plotly.newPlot('plotly', barData, layout);
-        
+
         // Where table code goes  
         // Inserte code here
 
-    }).catch(function(error) {
-    console.log(error);
+    }).catch(function (error) {
+        console.log(error);
     });
 }
 initialDashboard();
@@ -219,6 +235,7 @@ function dropdownChanged(newName) {
     // loadGraphDropdown(newName);
     // loadChartDropdown(newName);
 }
+
 
 function loadGlobeDropdown(newName) {
 
@@ -257,6 +274,7 @@ function loadGlobeDropdown(newName) {
             .bindPopup(`<b>${newName}</b><br>Country: <b>${country}</b><br>Rank: <b>${rank}</b><br>Net Worth: <b>$${netWorth} Billion</b><br>Source: <b>${source}</b>`)
             .addTo(myMap)
             .openPopup(myMap);
+
     });
 }
 
