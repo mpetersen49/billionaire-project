@@ -32,14 +32,16 @@ function initialDashboard() {
     });
 
     // Add tile layer to the globe
-    WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-        tileSize: 512,
-        maxZoom: 18,
-        zoomOffset: -1,
-        id: "mapbox/satellite-streets-v11",
-        accessToken: API_KEY
+    var globe = WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: "mapbox/satellite-streets-v11",
+    accessToken: API_KEY
+
     }).addTo(myMap);
+    
 
     var selector = d3.select("#selDataset");
     d3.json("/data").then(function (data, err) {
@@ -67,10 +69,12 @@ function initialDashboard() {
             // Assign the count to number
             Object.values(countryFrequency).forEach(value => number = (value));
 
-            // Create markers on globe
-            var marker = WE.marker([lat, lng])
-                .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
-                .addTo(myMap);
+        var marker = WE.marker([lat, lng])
+            .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
+            .addTo(myMap);
+
+
+
 
             // Append names to dropdown
             selector.append("option")
@@ -219,44 +223,90 @@ function initialDashboard() {
     });
 }
 initialDashboard();
+
+
 // Initial load page end -------------------------------------------------------------------------
 
 
 // Event change (dropdown) -------------------------------------------------------------------------
-function loadGlobeDropdown() {
+function dropdownChanged(newName) {
+    
+    loadGlobeDropdown(newName);
+    // loadGraphDropdown(newName);
+    // loadChartDropdown(newName);
+}
 
-    var selector = d3.select("#selDataset");
-    d3.json("/data").then(function (data) {
 
-        // Loop through data file
-        for (var i = 0; i < data.length; i++) {
+function loadGlobeDropdown(newName) {
 
-            var country = data[i].Country;
-            var name = data[i].Name;
-            var lat = data[i].latitude;
-            var lng = data[i].longitude;
+    // Clear content of "earth_div"
+    document.getElementById("earth_div").innerHTML = '';
 
-            // Add the map variable for our globe
-            var myMap = WE.map("earth_div", {
-                center: [40.7, -73.95],
-                zoom: 2
-            });
+    d3.json("/data").then(data => {
+        
+        var resultArray = data.filter(s => s.Name == newName);
+        var country = resultArray[0].Country;
+        var netWorth = resultArray[0].NetWorth;
+        var rank = resultArray[0].Rank;
+        var source = resultArray[0].Source;
+        var lat = resultArray[0].latitude;
+        var lng = resultArray[0].longitude;
+        // var newName = resultArray[0].Name;
 
-            // Create markers on globe
-            var marker = WE.marker([lat, lng])
-                .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
-                .addTo(myMap);
-        }
- 
+        // Add the map variable for our globe
+        var myMap = WE.map("earth_div", {
+        center: [lat, lng],
+        zoom: 2
+        });
+        
+        // Add tile layer to the globe
+        WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+            attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            tileSize: 512,
+            maxZoom: 18,
+            zoomOffset: -1,
+            id: "mapbox/satellite-streets-v11",
+            accessToken: API_KEY
+        }).addTo(myMap);
+
+        // Add marker
+        WE.marker([lat, lng])
+            .bindPopup(`<b>${newName}</b><br>Country: <b>${country}</b><br>Rank: <b>${rank}</b><br>Net Worth: <b>$${netWorth} Billion</b><br>Source: <b>${source}</b>`)
+            .addTo(myMap)
+            .openPopup(myMap);
+
     });
 }
 
+function loadGraphDropdown (newName) {
+
+
+
+}
+
+function loadChartDropdown (newName) {
+
+
+
+}
 // Event change (dropdown) end ----------------------------------------------------------------------------
-// Event change (globe)
-// code goes here
 
-//Event change (graph)
-// code goes here
 
-// Event change (table)
+
+
+
+// Event change (globe) start -----------------------------------------------------------------------------
 // code goes here
+// Event change (globe) end -------------------------------------------------------------------------------
+
+
+
+// Event change (graph) start ------------------------------------------------------------------------------
+// code goes here
+// Event change (graph) end --------------------------------------------------------------------------------
+
+
+
+// Event change (table) start ------------------------------------------------------------------------------
+// code goes here
+// Event change (table) end --------------------------------------------------------------------------------
