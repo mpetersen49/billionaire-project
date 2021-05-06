@@ -33,15 +33,15 @@ function initialDashboard() {
 
     // Add tile layer to the globe
     var globe = WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-    attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
-    tileSize: 512,
-    maxZoom: 18,
-    zoomOffset: -1,
-    id: "mapbox/satellite-streets-v11",
-    accessToken: API_KEY
+        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+        tileSize: 512,
+        maxZoom: 18,
+        zoomOffset: -1,
+        id: "mapbox/satellite-streets-v11",
+        accessToken: API_KEY
 
     }).addTo(myMap);
-    
+
 
     var selector = d3.select("#selDataset");
     d3.json("/data").then(function (data, err) {
@@ -69,9 +69,9 @@ function initialDashboard() {
             // Assign the count to number
             Object.values(countryFrequency).forEach(value => number = (value));
 
-        var marker = WE.marker([lat, lng])
-            .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
-            .addTo(myMap);
+            var marker = WE.marker([lat, lng])
+                .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
+                .addTo(myMap);
 
 
 
@@ -230,9 +230,9 @@ initialDashboard();
 
 // Event change (dropdown) -------------------------------------------------------------------------
 function dropdownChanged(newName) {
-    
+
     loadGlobeDropdown(newName);
-    // loadGraphDropdown(newName);
+    loadGraphDropdown(newName);
     // loadChartDropdown(newName);
 }
 
@@ -243,7 +243,7 @@ function loadGlobeDropdown(newName) {
     document.getElementById("earth_div").innerHTML = '';
 
     d3.json("/data").then(data => {
-        
+
         var resultArray = data.filter(s => s.Name == newName);
         var country = resultArray[0].Country;
         var netWorth = resultArray[0].NetWorth;
@@ -255,10 +255,10 @@ function loadGlobeDropdown(newName) {
 
         // Add the map variable for our globe
         var myMap = WE.map("earth_div", {
-        center: [lat, lng],
-        zoom: 2
+            center: [lat, lng],
+            zoom: 2
         });
-        
+
         // Add tile layer to the globe
         WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
             attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
@@ -278,13 +278,147 @@ function loadGlobeDropdown(newName) {
     });
 }
 
-function loadGraphDropdown (newName) {
+function loadGraphDropdown(newName) {
 
+    console.log(newName);
+    // Select a country & name
+    var selectedCountry = "";
+    var selectedName = newName;
+    d3.json("/data").then(data => {
 
+        // filter based on selected country only if filter has been applied
+        if (selectedCountry === "") {
+            var plotData = data;
+        }
+        else {
+            var plotData = data.filter(obj => {
+                return obj.Country === selectedCountry
+            });
 
+        }
+
+        // sort billionaires by networth descending
+        plotData.sort(function (a, b) {
+            return b.NetWorth - a.NetWorth;
+        });
+        // console.log(plotData);
+
+        // empty lists for plot and default color list
+        var plotNetWorths = [];
+        var plotNames = [];
+        var plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'];
+        var plotText = [];
+
+        // loop through all rows of data
+        for (var i = 0; i < plotData.length; i++) {
+            // looking for the billionaire that was selected via filter
+            if (plotData[i].Name === selectedName) {
+                // add 20 billionaires to list. doing it in differently depending on if it is a top 20 or bottom 20 billionaire
+                if (i > 19 && i < (plotData.length - 19)) {
+                    plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'red', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue']
+                    var j = i - 10;
+
+                    for (j; j < i; j++) {
+
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth);
+                        var name = plotData[j].Name;
+                        plotNames.push(name);
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+                    }
+
+                    var k = i;
+                    var last = i + 10;
+
+                    for (k; k < last; k++) {
+
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+                    }
+                }
+
+                else if (i < 20) {
+
+                    for (var j = 0; j < 20; j++) {
+                        plotColors[i] = 'red'
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[j].Name;
+                        plotNames.push(name)
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+
+                    }
+                }
+
+                else if (i > (plotData.length - 20)) {
+                    for (var k = (plotData.length - 20); k < plotData.length; k++) {
+                        plotColors[i - plotData.length + 20] = 'red'
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+
+                    }
+                }
+            }
+
+        }
+
+        // Create trace for hbar plot
+        var barData = [{
+            type: 'bar',
+            y: plotNames,
+            x: plotNetWorths,
+            text: plotText,
+            marker: {
+                color: plotColors
+            },
+            orientation: 'h',
+            transforms: [{
+                type: 'sort',
+                target: 'y',
+                order: 'descending'
+            }]
+        }];
+
+        var layout = {
+
+            title: "World Billionaire's Net Worth",
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {
+                color: 'rgba(255, 255, 255, 255)'
+            },
+            xaxis: {
+                title: {
+                    text: '$ Billions'
+                }
+            },
+            autosize: false,
+            width: 900,
+            height: 500,
+            margin: {
+                l: 250,
+                r: 50,
+                b: 100,
+                t: 100,
+                pad: 2
+            }
+        }
+        // create the hbar chart
+        Plotly.newPlot('plotly', barData, layout);
+    });
 }
 
-function loadChartDropdown (newName) {
+function loadChartDropdown(newName) {
 
 
 
