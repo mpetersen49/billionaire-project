@@ -112,3 +112,7 @@ div.panel-body {
     opacity: 1;
     right: 0;
   }
+  .yaxislayer-above {
+    cursor: pointer;
+    pointer-events: all;
+  }
