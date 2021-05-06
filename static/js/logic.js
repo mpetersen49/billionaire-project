@@ -212,8 +212,20 @@ function initialDashboard() {
                 pad: 2
             }
         }
+
         // create the hbar chart
-        Plotly.newPlot('plotly', barData, layout);
+
+        var nwPlot = document.getElementById('plotly');
+        Plotly.newPlot(nwPlot, barData, layout);
+
+        nwPlot.on('plotly_afterplot', function () {
+            Plotly.d3.selectAll(".yaxislayer-above").selectAll('text')
+                .on("click", function (d) {
+                    loadGlobeDropdown(d.text);
+                    loadGraphDropdown(d.text);
+                });
+        });
+
 
         // Where table code goes  
         // Inserte code here
@@ -414,7 +426,17 @@ function loadGraphDropdown(newName) {
             }
         }
         // create the hbar chart
-        Plotly.newPlot('plotly', barData, layout);
+
+        var nwPlot = document.getElementById('plotly');
+        Plotly.newPlot(nwPlot, barData, layout);
+
+        nwPlot.on('plotly_afterplot', function () {
+            Plotly.d3.selectAll(".yaxislayer-above").selectAll('text')
+                .on("click", function (d) {
+                    loadGlobeDropdown(d.text);
+                    loadGraphDropdown(d.text);
+                });
+        });
     });
 }
 
