@@ -47,7 +47,7 @@ function initialDashboard() {
     d3.json("/data").then(function (data, err) {
         if (err) throw err;
 
-        // console.log(data);
+        console.log(data);
         var countryFrequency = {};
 
         // Loop through data file
@@ -226,9 +226,22 @@ function initialDashboard() {
                 });
         });
 
-
-        // Where table code goes  
-        // Inserte code here
+        // Create the table
+        var tbody = d3.select("tbody");
+        data.forEach(function(data) {
+            var row = tbody.append("tr");
+        
+            // Collect the key and value for each object
+            Object.entries(data).forEach(function([key, value]) {
+                // console.log(key, value);
+        
+                // Use d3 to append one cell per ufo data value
+                var cell = row.append("td");
+        
+                // Append a cell to the row for each value in ufo data object
+                cell.text(value);
+            });
+        });
 
     }).catch(function (error) {
         console.log(error);
@@ -245,7 +258,7 @@ function dropdownChanged(newName) {
 
     loadGlobeDropdown(newName);
     loadGraphDropdown(newName);
-    // loadChartDropdown(newName);
+    loadChartDropdown(newName);
 }
 
 
@@ -292,7 +305,7 @@ function loadGlobeDropdown(newName) {
 
 function loadGraphDropdown(newName) {
 
-    console.log(newName);
+    // console.log(newName);
     // Select a country & name
     var selectedCountry = "";
     var selectedName = newName;
@@ -442,27 +455,494 @@ function loadGraphDropdown(newName) {
 
 function loadChartDropdown(newName) {
 
+    document.getElementById("tbody").innerHTML = '';
 
+    d3.json("/data").then(data => {
+        var nameFiltered = data.filter(obj => obj.Name === newName);
 
+        // console.log(nameFiltered);
+        var tbody = d3.select("tbody");
+        nameFiltered.forEach(function(nameFiltered) {
+            var row = tbody.append("tr");
+
+            // Collect the key and value for each object
+            Object.entries(nameFiltered).forEach(function([key, value]) {
+                // console.log(key, value);
+
+                // Use d3 to append one cell per ufo data value
+                var cell = row.append("td");
+
+                // Append a cell to the row for each value in ufo data object
+                cell.text(value);
+            });
+
+        });
+        
+    });
+    
 }
 // Event change (dropdown) end ----------------------------------------------------------------------------
 
+// Event change (table) start ------------------------------------------------------------------------------
+function tableChanged(tableName) {
+
+    loadGlobeTable(tableName);
+    loadGraphTable(tableName);
+    loadChartTable(tableName);
+}
+
+function loadGlobeTable(tableName) {
+
+    // Clear content of "earth_div"
+    document.getElementById("earth_div").innerHTML = '';
+
+    d3.json("/data").then(data => {
+
+        var resultArray = data.filter(s => s.Name == tableName);
+        var country = resultArray[0].Country;
+        var netWorth = resultArray[0].NetWorth;
+        var rank = resultArray[0].Rank;
+        var source = resultArray[0].Source;
+        var lat = resultArray[0].latitude;
+        var lng = resultArray[0].longitude;
+        // var newName = resultArray[0].Name;
+
+        // Add the map variable for our globe
+        var myMap = WE.map("earth_div", {
+            center: [lat, lng],
+            zoom: 2
+        });
+
+        // Add tile layer to the globe
+        WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+            attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            tileSize: 512,
+            maxZoom: 18,
+            zoomOffset: -1,
+            id: "mapbox/satellite-streets-v11",
+            accessToken: API_KEY
+        }).addTo(myMap);
+
+        // Add marker
+        WE.marker([lat, lng])
+            .bindPopup(`<b>${tableName}</b><br>Country: <b>${country}</b><br>Rank: <b>${rank}</b><br>Net Worth: <b>$${netWorth} Billion</b><br>Source: <b>${source}</b>`)
+            .addTo(myMap)
+            .openPopup(myMap);
+
+    });
+}
+
+function loadGraphTable(tableName) {
+
+    // console.log(newName);
+    // Select a country & name
+    var selectedCountry = "";
+    var selectedName = tableName;
+    d3.json("/data").then(data => {
+
+        // filter based on selected country only if filter has been applied
+        if (selectedCountry === "") {
+            var plotData = data;
+        }
+        else {
+            var plotData = data.filter(obj => {
+                return obj.Country === selectedCountry
+            });
+
+        }
+
+        // sort billionaires by networth descending
+        plotData.sort(function (a, b) {
+            return b.NetWorth - a.NetWorth;
+        });
+        // console.log(plotData);
+
+        // empty lists for plot and default color list
+        var plotNetWorths = [];
+        var plotNames = [];
+        var plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'];
+        var plotText = [];
+
+        // loop through all rows of data
+        for (var i = 0; i < plotData.length; i++) {
+            // looking for the billionaire that was selected via filter
+            if (plotData[i].Name === selectedName) {
+                // add 20 billionaires to list. doing it in differently depending on if it is a top 20 or bottom 20 billionaire
+                if (i > 19 && i < (plotData.length - 19)) {
+                    plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'red', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue']
+                    var j = i - 10;
+
+                    for (j; j < i; j++) {
+
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth);
+                        var name = plotData[j].Name;
+                        plotNames.push(name);
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+                    }
+
+                    var k = i;
+                    var last = i + 10;
+
+                    for (k; k < last; k++) {
+
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+                    }
+                }
+
+                else if (i < 20) {
+
+                    for (var j = 0; j < 20; j++) {
+                        plotColors[i] = 'red'
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[j].Name;
+                        plotNames.push(name)
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+
+                    }
+                }
+
+                else if (i > (plotData.length - 20)) {
+                    for (var k = (plotData.length - 20); k < plotData.length; k++) {
+                        plotColors[i - plotData.length + 20] = 'red'
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+
+                    }
+                }
+            }
+
+        }
+
+        // Create trace for hbar plot
+        var barData = [{
+            type: 'bar',
+            y: plotNames,
+            x: plotNetWorths,
+            text: plotText,
+            marker: {
+                color: plotColors
+            },
+            orientation: 'h',
+            transforms: [{
+                type: 'sort',
+                target: 'y',
+                order: 'descending'
+            }]
+        }];
+
+        var layout = {
+
+            title: "World Billionaire's Net Worth",
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {
+                color: 'rgba(255, 255, 255, 255)'
+            },
+            xaxis: {
+                title: {
+                    text: '$ Billions'
+                }
+            },
+            autosize: false,
+            width: 900,
+            height: 500,
+            margin: {
+                l: 250,
+                r: 50,
+                b: 100,
+                t: 100,
+                pad: 2
+            }
+        }
+        // create the hbar chart
+
+        var nwPlot = document.getElementById('plotly');
+        Plotly.newPlot(nwPlot, barData, layout);
+
+        nwPlot.on('plotly_afterplot', function () {
+            Plotly.d3.selectAll(".yaxislayer-above").selectAll('text')
+                .on("click", function (d) {
+                    loadGlobeDropdown(d.text);
+                    loadGraphDropdown(d.text);
+                });
+        });
+    });
+}
+
+function loadChartTable(tableName) {
+
+    document.getElementById("tbody").innerHTML = '';
+
+    d3.json("/data").then(data => {
+        var nameFiltered = data.filter(obj => obj.Name === tableName);
+
+        // console.log(nameFiltered);
+        var tbody = d3.select("tbody");
+        nameFiltered.forEach(function(nameFiltered) {
+            var row = tbody.append("tr");
+
+            // Collect the key and value for each object
+            Object.entries(nameFiltered).forEach(function([key, value]) {
+                // console.log(key, value);
+
+                // Use d3 to append one cell per ufo data value
+                var cell = row.append("td");
+
+                // Append a cell to the row for each value in ufo data object
+                cell.text(value);
+            });
+
+        });
+        
+    });
+    
+}
+
+function rankChanged(tableRank) {
+
+    loadGlobeRank(tableRank);
+    loadGraphRank(tableRank);
+    loadChartRank(tableRank);
+}
+
+function loadGlobeRank(tableRank) {
+    var integer = parseInt(tableRank, 10);
+    // Clear content of "earth_div"
+    document.getElementById("earth_div").innerHTML = '';
+
+    d3.json("/data").then(data => {
+
+        var resultArray = data.filter(s => s.Rank = integer);
+        var country = resultArray[0].Country;
+        var netWorth = resultArray[0].NetWorth;
+        var rank = resultArray[0].Rank;
+        var source = resultArray[0].Source;
+        var lat = resultArray[0].latitude;
+        var lng = resultArray[0].longitude;
+        var name = resultArray[0].Name;
+
+        // Add the map variable for our globe
+        var myMap = WE.map("earth_div", {
+            center: [lat, lng],
+            zoom: 2
+        });
+
+        // Add tile layer to the globe
+        WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+            attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            tileSize: 512,
+            maxZoom: 18,
+            zoomOffset: -1,
+            id: "mapbox/satellite-streets-v11",
+            accessToken: API_KEY
+        }).addTo(myMap);
+
+        // Add marker
+        WE.marker([lat, lng])
+            .bindPopup(`<b>${name}</b><br>Country: <b>${country}</b><br>Rank: <b>${rank}</b><br>Net Worth: <b>$${netWorth} Billion</b><br>Source: <b>${source}</b>`)
+            .addTo(myMap)
+            .openPopup(myMap);
+
+    });
+}
+
+function loadGraphRank(tableRank) {
+    var integer = parseInt(tableRank, 10);
+    // console.log(newName);
+    // Select a country & name
+    var selectedCountry = "";
+    // var selectedName = tableName;  // <----------------
+    d3.json("/data").then(data => {
+        var resultArray = data.filter(s => s.Rank == integer);
+        var name2 = resultArray[0].Name;
+        var selectedName = name2;
 
 
+        // filter based on selected country only if filter has been applied
+        if (selectedCountry === "") {
+            var plotData = data;
+        }
+        else {
+            var plotData = data.filter(obj => {
+                return obj.Country === selectedCountry
+            });
 
+        }
+
+        // sort billionaires by networth descending
+        plotData.sort(function (a, b) {
+            return b.NetWorth - a.NetWorth;
+        });
+        // console.log(plotData);
+
+        // empty lists for plot and default color list
+        var plotNetWorths = [];
+        var plotNames = [];
+        var plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'];
+        var plotText = [];
+
+        // loop through all rows of data
+        for (var i = 0; i < plotData.length; i++) {
+            // looking for the billionaire that was selected via filter
+            if (plotData[i].Name === selectedName) {
+                // add 20 billionaires to list. doing it in differently depending on if it is a top 20 or bottom 20 billionaire
+                if (i > 19 && i < (plotData.length - 19)) {
+                    plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'red', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue']
+                    var j = i - 10;
+
+                    for (j; j < i; j++) {
+
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth);
+                        var name = plotData[j].Name;
+                        plotNames.push(name);
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+                    }
+
+                    var k = i;
+                    var last = i + 10;
+
+                    for (k; k < last; k++) {
+
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+                    }
+                }
+
+                else if (i < 20) {
+
+                    for (var j = 0; j < 20; j++) {
+                        plotColors[i] = 'red'
+                        var netWorth = plotData[j].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[j].Name;
+                        plotNames.push(name)
+                        var text = plotData[j].Source;
+                        plotText.push(text);
+
+                    }
+                }
+
+                else if (i > (plotData.length - 20)) {
+                    for (var k = (plotData.length - 20); k < plotData.length; k++) {
+                        plotColors[i - plotData.length + 20] = 'red'
+                        var netWorth = plotData[k].NetWorth;
+                        plotNetWorths.push(netWorth)
+                        var name = plotData[k].Name;
+                        plotNames.push(name)
+                        var text = plotData[k].Source;
+                        plotText.push(text);
+
+                    }
+                }
+            }
+
+        }
+
+        // Create trace for hbar plot
+        var barData = [{
+            type: 'bar',
+            y: plotNames,
+            x: plotNetWorths,
+            text: plotText,
+            marker: {
+                color: plotColors
+            },
+            orientation: 'h',
+            transforms: [{
+                type: 'sort',
+                target: 'y',
+                order: 'descending'
+            }]
+        }];
+
+        var layout = {
+
+            title: "World Billionaire's Net Worth",
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {
+                color: 'rgba(255, 255, 255, 255)'
+            },
+            xaxis: {
+                title: {
+                    text: '$ Billions'
+                }
+            },
+            autosize: false,
+            width: 900,
+            height: 500,
+            margin: {
+                l: 250,
+                r: 50,
+                b: 100,
+                t: 100,
+                pad: 2
+            }
+        }
+        // create the hbar chart
+
+        var nwPlot = document.getElementById('plotly');
+        Plotly.newPlot(nwPlot, barData, layout);
+
+        nwPlot.on('plotly_afterplot', function () {
+            Plotly.d3.selectAll(".yaxislayer-above").selectAll('text')
+                .on("click", function (d) {
+                    loadGlobeDropdown(d.text);
+                    loadGraphDropdown(d.text);
+                });
+        });
+    });
+}
+
+function loadChartRank(tableRank) {
+    var integer = parseInt(tableRank, 10);
+    document.getElementById("tbody").innerHTML = '';
+
+    d3.json("/data").then(data => {
+        var nameFiltered = data.filter(obj => obj.Rank === integer);
+
+        // console.log(nameFiltered);
+        var tbody = d3.select("tbody");
+        nameFiltered.forEach(function(nameFiltered) {
+            var row = tbody.append("tr");
+
+            // Collect the key and value for each object
+            Object.entries(nameFiltered).forEach(function([key, value]) {
+                // console.log(key, value);
+
+                // Use d3 to append one cell per ufo data value
+                var cell = row.append("td");
+
+                // Append a cell to the row for each value in ufo data object
+                cell.text(value);
+            });
+
+        });
+        
+    });
+    
+}
+// Event change (table) end --------------------------------------------------------------------------------
 
 // Event change (globe) start -----------------------------------------------------------------------------
 // code goes here
 // Event change (globe) end -------------------------------------------------------------------------------
-
-
-
-// Event change (graph) start ------------------------------------------------------------------------------
-// code goes here
-// Event change (graph) end --------------------------------------------------------------------------------
-
-
-
-// Event change (table) start ------------------------------------------------------------------------------
-// code goes here
-// Event change (table) end --------------------------------------------------------------------------------
