@@ -14,6 +14,9 @@
   <!-- CSS -->
   <link rel="stylesheet" href="../static/css/style.css">
 
+  <!-- :favicon.ico error fix -->
+  <!-- found on: https://stackoverflow.com/questions/31075893/im-getting-favicon-ico-error -->
+  <link rel="shortcut icon" href="#" />
 </head>
 
 <!-- Head Image -->
@@ -83,19 +86,19 @@
                     <ul class="list-group" id="filters">
                         <li class="filter list-group-item" id="formOne">
                           <label for="date">Enter a Name</label>
-                          <input class="form-control" id="datetime" type="text" placeholder="Elon Musk">
+                          <input class="form-control" id="name-filter" type="text" placeholder="Elon Musk" onchange="tableChanged(this.value)">
                         </li>
                         <li class="filter list-group-item">
                           <label for="date">Enter a Country</label>
-                          <input class="form-control" id="city" type="text" placeholder="United States">
+                          <input class="form-control" id="country-filter" type="text" placeholder="United States">
                         </li>
                         <li class="filter list-group-item">
                           <label for="date">Enter a Source</label>
-                          <input class="form-control" id="Source" type="text" placeholder="Tesla">
+                          <input class="form-control" id="source-filter" type="text" placeholder="Tesla">
                         </li>
                         <li class="filter list-group-item">
                           <label for="date">Enter a Rank</label>
-                          <input class="form-control" id="country" type="text" placeholder="2">
+                          <input class="form-control" id="rank-filter" type="text" placeholder="2" onchange="rankChanged(this.value)">
                         </li>
                       
                         </li>
@@ -112,16 +115,16 @@
             <table id="Billionaire-table" class="table table-striped ">
               <thead>
                 <tr>
-                    
+                  <th class="table-head">Country</th>
                   <th class="table-head">Name</th>
                   <th class="table-head">NetWorth</th>
-                  <th class="table-head">Country</th>
-                  <th class="table-head">Country</th>
-                  <th class="table-head">Source</th>
                   <th class="table-head">Rank</th>
+                  <th class="table-head">Source</th>
+                  <th class="table-head">latitude</th>
+                  <th class="table-head">longitude</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody id="tbody"></tbody>
             </table>
           </div>
         </div>
