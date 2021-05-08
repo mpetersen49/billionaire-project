@@ -11,8 +11,13 @@ from sqlalchemy import create_engine
 
 from config import username, password
 
-connection_string = f"{username}:{password}@localhost:5432/billionaires_db"
-engine = create_engine(f"postgresql://{connection_string}")
+# connection_string = f"{username}:{password}@localhost:5432/billionaires_db"
+# engine = create_engine(f"postgresql://{connection_string}")
+# base = automap_base()
+# base.prepare(engine, reflect=True)
+
+
+engine = create_engine(f"sqlite:///static/data/billionaires.db")
 base = automap_base()
 base.prepare(engine, reflect=True)
 
