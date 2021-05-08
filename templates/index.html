@@ -60,7 +60,6 @@
       </div>
     </div>
 
-  <!--Edris code starts here-->
   <div class="wrapper">
     <nav class="navbar navbar-default">
       <div class="container-fluid">
@@ -90,11 +89,7 @@
                         </li>
                         <li class="filter list-group-item">
                           <label for="date">Enter a Country</label>
-                          <input class="form-control" id="country-filter" type="text" placeholder="United States">
-                        </li>
-                        <li class="filter list-group-item">
-                          <label for="date">Enter a Source</label>
-                          <input class="form-control" id="source-filter" type="text" placeholder="Tesla">
+                          <input class="form-control" id="country-filter" type="text" placeholder="United States" onchange="countryChanged(this.value)">
                         </li>
                         <li class="filter list-group-item">
                           <label for="date">Enter a Rank</label>
@@ -131,7 +126,6 @@
       </div>
     </div>
   </div>
-  <!--Edris code ends here-->
 
   <!-- Imports -->
   <!-- Leaflet JS -->
