@@ -9,7 +9,7 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 
-from config import username, password
+#from config import username, password
 
 # connection_string = f"{username}:{password}@localhost:5432/billionaires_db"
 # engine = create_engine(f"postgresql://{connection_string}")
@@ -59,4 +59,4 @@ def APIrequest():
     return jsonify(api_data)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
