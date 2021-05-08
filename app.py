@@ -9,15 +9,10 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 
-#from config import username, password
+from config import username, password
 
-# connection_string = f"{username}:{password}@localhost:5432/billionaires_db"
-# engine = create_engine(f"postgresql://{connection_string}")
-# base = automap_base()
-# base.prepare(engine, reflect=True)
-
-
-engine = create_engine(f"sqlite:///static/data/billionaires.db")
+connection_string = f"{username}:{password}@localhost:5432/billionaires_db"
+engine = create_engine(f"postgresql://{connection_string}")
 base = automap_base()
 base.prepare(engine, reflect=True)
 
