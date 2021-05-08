@@ -1,4 +1,4 @@
-// Initial load page --------------------------------------------------------------------------------------------------
+// Initial load page start--------------------------------------------------------------------------------------------------
 function initialDashboard() {
     // Code taken directly from: https://tobiasahlin.com/moving-letters/#2
     // This code will animate h3 text in the header image
@@ -24,7 +24,8 @@ function initialDashboard() {
             delay: 1000
         });
     // End of header text animation 
-
+    
+    // Globe start
     // Add the map variable for our globe
     var myMap = WE.map("earth_div", {
         center: [40.7, -73.95],
@@ -42,22 +43,20 @@ function initialDashboard() {
 
     }).addTo(myMap);
 
-
     var selector = d3.select("#selDataset");
     d3.json("/data").then(function (data, err) {
         if (err) throw err;
-
+        
         console.log(data);
         var countryFrequency = {};
-
+        
         // Loop through data file
         for (var i = 0; i < data.length; i++) {
-
             var country = data[i].Country;
             var name = data[i].Name;
             var lat = data[i].latitude;
-            var lng = data[i].longitude;
-
+            var lng = data[i].longitude;            
+            
             // Count the number of billionaires in each country
             if (country in countryFrequency) {
                 countryFrequency[country] += 1;
@@ -72,15 +71,16 @@ function initialDashboard() {
             var marker = WE.marker([lat, lng])
                 .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
                 .addTo(myMap);
-
-
-
-
+    // Globe end    
+    // Dropdown 
             // Append names to dropdown
             selector.append("option")
                 .text(name)
                 .property("value", name);
+    // Dropdown end    
         }
+        
+    // Chart start   
         // Select a country & name
         var selectedCountry = "";
         var selectedName = document.getElementById('selDataset').value;
@@ -225,7 +225,8 @@ function initialDashboard() {
                     loadGraphDropdown(d.text);
                 });
         });
-
+    // Chart end
+    // Table start
         // Create the table
         var tbody = d3.select("tbody");
         data.forEach(function(data) {
@@ -242,25 +243,24 @@ function initialDashboard() {
                 cell.text(value);
             });
         });
+    // Table end    
+    
 
     }).catch(function (error) {
         console.log(error);
     });
 }
 initialDashboard();
-
-
 // Initial load page end -------------------------------------------------------------------------
 
 
-// Event change (dropdown) -------------------------------------------------------------------------
+// Event change (dropdown) start-------------------------------------------------------------------------
 function dropdownChanged(newName) {
 
     loadGlobeDropdown(newName);
     loadGraphDropdown(newName);
     loadChartDropdown(newName);
 }
-
 
 function loadGlobeDropdown(newName) {
 
@@ -710,21 +710,39 @@ function loadChartTable(tableName) {
     });
     
 }
-
+// --------------------------------------------------------------------
 function rankChanged(tableRank) {
 
-    loadGlobeRank(tableRank);
-    loadGraphRank(tableRank);
-    loadChartRank(tableRank);
-}
+    rankArray = [];
+    d3.json("/data").then(function (data, err) {
+        if (err) throw err;
+        for (var i = 0; i < data.length; i++) {
+            // rankArray.push(data[i].Rank);
+            console.log(Object.value(data[i].Rank));
+        }
+    });
+    console.log(rankArray);
 
+    loadGlobeRank(tableRank);
+    // loadGraphRank(tableRank);
+    // loadChartRank(tableRank);
+}
+// ----------------------------------------------------------------------
 function loadGlobeRank(tableRank) {
+
     var integer = parseInt(tableRank, 10);
+    // Find closest rank in data
+    // Found on: https://stackoverflow.com/questions/8584902/get-the-closest-number-out-of-an-array
+    var closest = rankArray.reduce(function(prev, curr) {
+        return (Math.abs(curr - integer) < Math.abs(prev - integer) ? curr : prev);
+    });
+    console.log(closest);
+
     // Clear content of "earth_div"
     document.getElementById("earth_div").innerHTML = '';
-
+    
     d3.json("/data").then(data => {
-
+        
         var resultArray = data.filter(s => s.Rank = integer);
         var country = resultArray[0].Country;
         var netWorth = resultArray[0].NetWorth;
@@ -757,6 +775,7 @@ function loadGlobeRank(tableRank) {
             .openPopup(myMap);
 
     });
+    
 }
 
 function loadGraphRank(tableRank) {
@@ -764,10 +783,13 @@ function loadGraphRank(tableRank) {
     // console.log(newName);
     // Select a country & name
     var selectedCountry = "";
+    
     // var selectedName = tableName;  // <----------------
+    
     d3.json("/data").then(data => {
-        var resultArray = data.filter(s => s.Rank == integer);
-        var name2 = resultArray[0].Name;
+        
+        var resultArray2 = data.filter(s => s.Rank == integer);
+        var name2 = resultArray2[0].Name;
         var selectedName = name2;
 
 
@@ -911,6 +933,7 @@ function loadGraphRank(tableRank) {
                 });
         });
     });
+    console.log(rank);
 }
 
 function loadChartRank(tableRank) {
@@ -941,6 +964,84 @@ function loadChartRank(tableRank) {
     });
     
 }
+// -------------------------------------------------------------------------
+function countryChanged(tableCountry) {
+
+
+    loadGlobeCountry(tableCountry);
+    // loadGraphCountry(tableCountry);
+    loadChartCountry(tableCountry);
+}
+
+function loadGlobeCountry(tableCountry) {
+
+    // Clear content of "earth_div"
+    document.getElementById("earth_div").innerHTML = '';
+
+    var countryFrequency = {};
+    d3.json("/data").then(data => {
+
+        var resultArray = data.filter(s => s.Country == tableCountry);
+        var lat = resultArray[0].latitude;
+        var lng = resultArray[0].longitude;
+        
+        var size = Object.keys(resultArray).length;
+        console.log(size);
+   
+        // Add the map variable for our globe
+        var myMap = WE.map("earth_div", {
+            center: [lat, lng],
+            zoom: 2
+        });
+
+        // Add tile layer to the globe
+        WE.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+            attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            tileSize: 512,
+            maxZoom: 18,
+            zoomOffset: -1,
+            id: "mapbox/satellite-streets-v11",
+            accessToken: API_KEY
+        }).addTo(myMap);
+
+        // Add marker
+        WE.marker([lat, lng])
+        .bindPopup(`<b>${tableCountry}</b><br>Number of Billionaires:<br><b> ${size}</b>`)
+            .addTo(myMap)
+            .openPopup(myMap);
+
+    });
+}
+
+function loadChartCountry(tableCountry) {
+    
+    document.getElementById("tbody").innerHTML = '';
+
+    d3.json("/data").then(data => {
+        var nameFiltered = data.filter(obj => obj.Country === tableCountry);
+
+        // console.log(nameFiltered);
+        var tbody = d3.select("tbody");
+        nameFiltered.forEach(function(nameFiltered) {
+            var row = tbody.append("tr");
+
+            // Collect the key and value for each object
+            Object.entries(nameFiltered).forEach(function([key, value]) {
+                // console.log(key, value);
+
+                // Use d3 to append one cell per ufo data value
+                var cell = row.append("td");
+
+                // Append a cell to the row for each value in ufo data object
+                cell.text(value);
+            });
+
+        });
+        
+    });
+    
+}
+
 // Event change (table) end --------------------------------------------------------------------------------
 
 // Event change (globe) start -----------------------------------------------------------------------------
