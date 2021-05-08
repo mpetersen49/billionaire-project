@@ -713,37 +713,30 @@ function loadChartTable(tableName) {
 // --------------------------------------------------------------------
 function rankChanged(tableRank) {
 
-    rankArray = [];
-    d3.json("/data").then(function (data, err) {
-        if (err) throw err;
-        for (var i = 0; i < data.length; i++) {
-            // rankArray.push(data[i].Rank);
-            console.log(Object.value(data[i].Rank));
-        }
-    });
-    console.log(rankArray);
-
     loadGlobeRank(tableRank);
-    // loadGraphRank(tableRank);
-    // loadChartRank(tableRank);
+    loadGraphRank(tableRank);
+    loadChartRank(tableRank);
 }
 // ----------------------------------------------------------------------
 function loadGlobeRank(tableRank) {
-
+    
     var integer = parseInt(tableRank, 10);
-    // Find closest rank in data
-    // Found on: https://stackoverflow.com/questions/8584902/get-the-closest-number-out-of-an-array
-    var closest = rankArray.reduce(function(prev, curr) {
-        return (Math.abs(curr - integer) < Math.abs(prev - integer) ? curr : prev);
-    });
-    console.log(closest);
+    
 
     // Clear content of "earth_div"
     document.getElementById("earth_div").innerHTML = '';
     
     d3.json("/data").then(data => {
+        let result = data.map(a => a.Rank);
+
+        // Find closest rank in data
+        // Found on: https://stackoverflow.com/questions/8584902/get-the-closest-number-out-of-an-array
+        var closest = result.reduce(function(prev, curr) {
+            return (Math.abs(curr - integer) < Math.abs(prev - integer) ? curr : prev);
+        });
+        console.log(closest);
         
-        var resultArray = data.filter(s => s.Rank = integer);
+        var resultArray = data.filter(s => s.Rank == closest);
         var country = resultArray[0].Country;
         var netWorth = resultArray[0].NetWorth;
         var rank = resultArray[0].Rank;
@@ -751,7 +744,7 @@ function loadGlobeRank(tableRank) {
         var lat = resultArray[0].latitude;
         var lng = resultArray[0].longitude;
         var name = resultArray[0].Name;
-
+        console.log(result);
         // Add the map variable for our globe
         var myMap = WE.map("earth_div", {
             center: [lat, lng],
@@ -787,8 +780,16 @@ function loadGraphRank(tableRank) {
     // var selectedName = tableName;  // <----------------
     
     d3.json("/data").then(data => {
+        let result = data.map(a => a.Rank);
+
+        // Find closest rank in data
+        // Found on: https://stackoverflow.com/questions/8584902/get-the-closest-number-out-of-an-array
+        var closest = result.reduce(function(prev, curr) {
+            return (Math.abs(curr - integer) < Math.abs(prev - integer) ? curr : prev);
+        });
+        console.log(closest);
         
-        var resultArray2 = data.filter(s => s.Rank == integer);
+        var resultArray2 = data.filter(s => s.Rank == closest);
         var name2 = resultArray2[0].Name;
         var selectedName = name2;
 
@@ -933,7 +934,7 @@ function loadGraphRank(tableRank) {
                 });
         });
     });
-    console.log(rank);
+    
 }
 
 function loadChartRank(tableRank) {
@@ -941,7 +942,17 @@ function loadChartRank(tableRank) {
     document.getElementById("tbody").innerHTML = '';
 
     d3.json("/data").then(data => {
-        var nameFiltered = data.filter(obj => obj.Rank === integer);
+
+        let result = data.map(a => a.Rank);
+
+        // Find closest rank in data
+        // Found on: https://stackoverflow.com/questions/8584902/get-the-closest-number-out-of-an-array
+        var closest = result.reduce(function(prev, curr) {
+            return (Math.abs(curr - integer) < Math.abs(prev - integer) ? curr : prev);
+        });
+        console.log(closest);
+
+        var nameFiltered = data.filter(obj => obj.Rank === closest);
 
         // console.log(nameFiltered);
         var tbody = d3.select("tbody");
