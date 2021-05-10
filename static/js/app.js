@@ -86,7 +86,7 @@ d3.json("/data").then(function(data, err) {
 
       // Select a country & name
       var selectedCountry = "";
-      var selectedName = "Alan Rydge";
+      var selectedName = "Jeff Bezos";
 
       // filter based on selected country
       if (selectedCountry === "") {
