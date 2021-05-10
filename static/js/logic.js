@@ -71,8 +71,6 @@ function initialDashboard() {
             var marker = WE.marker([lat, lng])
                 .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
                 .addTo(myMap);
-    // Globe end    
-    // Dropdown 
 
             // Append names to dropdown
             selector.append("option")
@@ -1093,7 +1091,7 @@ function loadGraphCountry(tableCountry) {
                 console.log('Net worth undefined')
                 break
             }
-            
+
             if (netWorth != "") {
                 plotNetWorths.push(netWorth);
                 var name = plotData[i].Name;
@@ -1127,7 +1125,7 @@ function loadGraphCountry(tableCountry) {
 
         var layout = {
 
-            title: "World Billionaire's Net Worth",
+            title: `${tableCountry} Billionaire's Net Worth`,
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             font: {
