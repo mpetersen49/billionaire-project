@@ -449,6 +449,7 @@ function loadGraphDropdown(newName) {
                 .on("click", function (d) {
                     loadGlobeDropdown(d.text);
                     loadGraphDropdown(d.text);
+                    loadChartDropdown(d.text);
                 });
         });
     });
@@ -459,7 +460,7 @@ function loadChartDropdown(newName) {
     document.getElementById("tbody").innerHTML = '';
 
     d3.json("/data").then(data => {
-        var nameFiltered = data.filter(obj => obj.Name === newName);
+        var nameFiltered = data.filter(obj => obj.Name == newName);
 
         // console.log(nameFiltered);
         var tbody = d3.select("tbody");
@@ -678,6 +679,7 @@ function loadGraphTable(tableName) {
                 .on("click", function (d) {
                     loadGlobeDropdown(d.text);
                     loadGraphDropdown(d.text);
+                    loadChartDropdown(d.text);
                 });
         });
     });
@@ -931,6 +933,7 @@ function loadGraphRank(tableRank) {
                 .on("click", function (d) {
                     loadGlobeDropdown(d.text);
                     loadGraphDropdown(d.text);
+                    loadChartDropdown(d.text);
                 });
         });
     });
@@ -1268,12 +1271,9 @@ function loadGraphCountry(tableCountry) {
                 .on("click", function (d) {
                     loadGlobeDropdown(d.text);
                     loadGraphDropdown(d.text);
+                    loadChartDropdown(d.text);
                 });
         });
     });
 }
 // Event change (table) end --------------------------------------------------------------------------------
-
-// Event change (globe) start -----------------------------------------------------------------------------
-// code goes here
-// Event change (globe) end -------------------------------------------------------------------------------
