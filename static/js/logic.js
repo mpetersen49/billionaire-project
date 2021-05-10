@@ -71,8 +71,7 @@ function initialDashboard() {
             var marker = WE.marker([lat, lng])
                 .bindPopup(`<b>${country}</b><br>Number of Billionaires:<br><b> ${number}</b>`)
                 .addTo(myMap);
-    // Globe end    
-    // Dropdown 
+
             // Append names to dropdown
             selector.append("option")
                 .text(name)
@@ -980,7 +979,7 @@ function countryChanged(tableCountry) {
 
 
     loadGlobeCountry(tableCountry);
-    // loadGraphCountry(tableCountry);
+    loadGraphCountry(tableCountry);
     loadChartCountry(tableCountry);
 }
 
@@ -1057,6 +1056,115 @@ function loadChartCountry(tableCountry) {
     
 }
 
+function loadGraphCountry(tableCountry) {
+    
+    // console.log(newName);
+    // Select a country & name
+    var selectedCountry = tableCountry;
+    d3.json("/data").then(data => {
+
+        // filter based on selected country only if filter has been applied
+        if (selectedCountry === "") {
+            var plotData = data;
+        }
+        else {
+            var plotData = data.filter(obj => {
+                return obj.Country === selectedCountry
+            });
+
+        }
+
+        // sort billionaires by networth descending
+        plotData.sort(function (a, b) {
+            return b.NetWorth - a.NetWorth;
+        });
+        // console.log(plotData);
+
+        // empty lists for plot and default color list
+        var plotNetWorths = [];
+        var plotNames = [];
+        var plotColors = ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'];
+        var plotText = [];
+
+        // loop through all rows of data
+        for (var i = 0; i < 20; i++) {
+            try {
+                var netWorth = plotData[i].NetWorth;
+            }
+            catch {
+                console.log('Net worth undefined')
+                break
+            }
+
+            if (netWorth != "") {
+                plotNetWorths.push(netWorth);
+                var name = plotData[i].Name;
+                plotNames.push(name);
+                var text = plotData[i].Source;
+                plotText.push(text);
+            }
+            else {
+                break
+            }
+        }
+
+     
+        
+        // Create trace for hbar plot
+        var barData = [{
+            type: 'bar',
+            y: plotNames,
+            x: plotNetWorths,
+            text: plotText,
+            marker: {
+                color: plotColors
+            },
+            orientation: 'h',
+            transforms: [{
+                type: 'sort',
+                target: 'y',
+                order: 'descending'
+            }]
+        }];
+
+        var layout = {
+
+            title: `${tableCountry} Billionaire's Net Worth`,
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {
+                color: 'rgba(255, 255, 255, 255)'
+            },
+            xaxis: {
+                title: {
+                    text: '$ Billions'
+                }
+            },
+            autosize: false,
+            width: 900,
+            height: 500,
+            margin: {
+                l: 250,
+                r: 50,
+                b: 100,
+                t: 100,
+                pad: 2
+            }
+        }
+        // create the hbar chart
+
+        var nwPlot = document.getElementById('plotly');
+        Plotly.newPlot(nwPlot, barData, layout);
+
+        nwPlot.on('plotly_afterplot', function () {
+            Plotly.d3.selectAll(".yaxislayer-above").selectAll('text')
+                .on("click", function (d) {
+                    loadGlobeDropdown(d.text);
+                    loadGraphDropdown(d.text);
+                });
+        });
+    });
+}
 // Event change (table) end --------------------------------------------------------------------------------
 
 // Event change (globe) start -----------------------------------------------------------------------------
