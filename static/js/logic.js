@@ -223,6 +223,7 @@ function initialDashboard() {
                 .on("click", function (d) {
                     loadGlobeDropdown(d.text);
                     loadGraphDropdown(d.text);
+                    loadChartDropdown(d.text);
                 });
         });
     // Chart end
@@ -787,7 +788,6 @@ function loadGraphRank(tableRank) {
         var closest = result.reduce(function(prev, curr) {
             return (Math.abs(curr - integer) < Math.abs(prev - integer) ? curr : prev);
         });
-        console.log(closest);
         
         var resultArray2 = data.filter(s => s.Rank == closest);
         var name2 = resultArray2[0].Name;
@@ -982,6 +982,10 @@ function countryChanged(tableCountry) {
     loadGlobeCountry(tableCountry);
     // loadGraphCountry(tableCountry);
     loadChartCountry(tableCountry);
+}
+
+function loadGraphCountry(tableCountry) {
+    // Code goes here
 }
 
 function loadGlobeCountry(tableCountry) {
