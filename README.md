@@ -1,5 +1,3 @@
-### This repo was cloned from github.com/mpetersen49/billionaire-project in order to host the project to Heroku
-
 # billionaire-project
 
 ## Project Description
