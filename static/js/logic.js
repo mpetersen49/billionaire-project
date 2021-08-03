@@ -78,8 +78,7 @@ function initialDashboard() {
                 .text(name)
                 .property("value", name);
     // Dropdown end    
-        }
-        
+        }        
     // Chart start   
         // Select a country & name
         var selectedCountry = "";
@@ -244,7 +243,7 @@ function initialDashboard() {
                 cell.text(value);
             });
         });
-    // Table end    
+        // Table end    
     
 
     }).catch(function (error) {
