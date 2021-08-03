@@ -1,3 +1,5 @@
+### This repo was cloned from github.com/mpetersen49/billionaire-project in order to host the project to Heroku
+
 # billionaire-project
 
 ## Project Description
@@ -7,7 +9,6 @@ For this project our team created a web application using a flask server. The we
 To complete this project we created a flask server that retreives data from a postgres database and returns json data. The web application uses javascript to read the json data from the flask server using an api request.
 
 The dashboard allows for user interaction to explore the dataset and visualize the data. We utilized leaflet, plotly and d3 to create and manipulate the visualizations.
-
 
 ## Setup Instructions
 
