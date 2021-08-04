@@ -7,6 +7,7 @@ For this project our team created a web application using a flask server. The we
 To complete this project we created a flask server that retreives data from a postgres database and returns json data. The web application uses javascript to read the json data from the flask server using an api request.
 
 The dashboard allows for user interaction to explore the dataset and visualize the data. We utilized leaflet, plotly and d3 to create and manipulate the visualizations.
+
 #
  View the [website here](https://jonweber0328.github.io/billionaire-project/) or follow the instructions below. The hyperlink website was set up in a different [repository](https://github.com/JonWeber0328/billionaire-project) using the same data from a .csv file.
 #
