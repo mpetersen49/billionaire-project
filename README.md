@@ -38,4 +38,12 @@ The dashboard allows for user interaction to explore the dataset and visualize t
 1. Close the chrome browser
 1. In the git bash terminal hit `CTRL+C` to stop the flask server
 1. Close the git bash terminal
-
+#
+### Website Preview
+![homepage](static/images/homePage1.png)
+#
+![homepage2](static/images/homePage2.png)
+#
+![homepage3](static/images/homePage3.png)
+#
+![homepage4](static/images/homePage4.png)
